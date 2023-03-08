@@ -1,0 +1,76 @@
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding:ActivityMainBinding ;
+    private var namelist = intArrayOf(
+        R.drawable.img1,
+        R.drawable.img2,
+        R.drawable.img3,
+        R.drawable.img4,
+        R.drawable.img4,
+        R.drawable.img6
+    )
+    private var index = 0
+
+    override fun onCreate(savedInstanceState: Bundle?){
+        super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view  = binding.root
+        setContentView(view)
+        setUpImageSwitcher()
+    }
+
+    private fun setUpImageSwitcher(){
+
+        val imageSwitcher = ImageSwitcher(this)
+        val layoutParams = LinearLayout.LayoutParams(900,900)
+        layoutParams.setMargins(20,20,20,20)
+        imageSwitcher.layoutParams = layoutParams
+
+        imageSwitcher.setFactory{
+            val imageView  = ImageView(applicationContext)
+            imageView.scaleType=ImageView.ScaleType.FIT_CENTER
+            imageView.layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT
+            )
+            imageView
+        }
+        imageSwitcher.setImageResource(namelist[index])
+        val inAnim = AnimationUtils.loadAnimation(this,android.R.anim.slide_out_right)
+        imageSwitcher.inAnimation = inAnim
+
+        val out = AnimationUtils.loadAnimation(this,android.R.anim.slide_in_left)
+        imageSwitcher.outAnimation = out
+
+        val linearLayout = findViewById<LinearLayout>(R.id.rootContainer)
+        linearLayout?.addView(imageSwitcher)
+
+        binding.btn.setOnClickListener{
+            index = if (++index<namelist.size)index
+            else
+                0
+            imageSwitcher.setImageResource(namelist[index])
+        }
+    }
+}
+
+
+
+
+#xml
+
+    <Button
+        android:id="@+id/btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="NEXT"/>
+
+
+    <LinearLayout
+        android:id="@+id/rootContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    </LinearLayout>
