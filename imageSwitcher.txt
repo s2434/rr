@@ -1,0 +1,101 @@
+XML--------------------------------------------------------------------------------------
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="NEXT"/>
+
+
+    <LinearLayout
+        android:id="@+id/rootContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+</LinearLayout>
+
+
+
+
+
+KT------------------------------------------------------------------------------------------
+
+
+package com.example.imageswitcher
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.view.animation.AnimationUtils
+import android.widget.FrameLayout
+import android.widget.ImageSwitcher
+import android.widget.ImageView
+import android.widget.LinearLayout
+import com.example.imageswitcher.databinding.ActivityMainBinding
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding;
+    private var index = 0
+    private var namelist = intArrayOf(
+        R.drawable.ic_launcher_background,
+        R.drawable.ic_launcher_background,
+        R.drawable.ic_launcher_background,
+        R.drawable.ic_launcher_background,
+        R.drawable.ic_launcher_foreground,
+    )
+
+
+    override fun onCreate(savedInstanceState: Bundle?){
+        super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view  = binding.root
+        setContentView(view)
+        setUpImageSwitcher()
+    }
+
+    private fun setUpImageSwitcher(){
+
+        val imageSwitcher = ImageSwitcher(this)
+        val layoutParams = LinearLayout.LayoutParams(900,900)
+        layoutParams.setMargins(20,20,20,20)
+        imageSwitcher.layoutParams = layoutParams
+
+        imageSwitcher.setFactory{
+            val imageView  = ImageView(applicationContext)
+            imageView.scaleType= ImageView.ScaleType.FIT_CENTER
+            imageView.layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT
+            )
+            imageView
+        }
+        imageSwitcher.setImageResource(namelist[index])
+        val inAnim = AnimationUtils.loadAnimation(this,android.R.anim.slide_out_right)
+        imageSwitcher.inAnimation = inAnim
+
+        val out = AnimationUtils.loadAnimation(this,android.R.anim.slide_in_left)
+        imageSwitcher.outAnimation = out
+
+        val linearLayout = findViewById<LinearLayout>(R.id.rootContainer)
+        linearLayout?.addView(imageSwitcher)
+
+        binding.btn.setOnClickListener{
+            index = if (++index<namelist.size)index
+            else
+                0
+            imageSwitcher.setImageResource(namelist[index])
+        }
+    }
+}
